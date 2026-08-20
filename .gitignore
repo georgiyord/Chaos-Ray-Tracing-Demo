@@ -1,0 +1,9 @@
+scene.blend1
+main
+debugTool
+imgui.ini
+compile_commands.json
+.cache
+.vscode
+**.kra
+**_pycache__

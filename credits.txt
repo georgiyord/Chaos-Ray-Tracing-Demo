@@ -1,0 +1,6 @@
+skybox: https://bumbadida.itch.io/skybox-textures-sdr
+character: https://free3d.com/3d-model/girl-blind-703979.html
+chair: https://free3d.com/3d-model/wooden-chair-709228.html
+magnifying glass frame: https://free3d.com/3d-model/magnifying-glass-99247.html
+table: https://free3d.com/3d-model/glass-table-643905.html
+wooden texture: https://ambientcg.com/view?id=Wood066
