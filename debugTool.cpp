@@ -11,6 +11,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <chrono>
+#include <memory>
 #include <vector>
 #include <thread>
 #include <atomic>
@@ -185,8 +186,8 @@ int main(int, char**)
     // Double-buffered render targets: the background thread renders into
     // backBuffer, which is swapped into frontBuffer once complete. The main
     // thread only ever touches frontBuffer (no data races).
-    RenderEngine::Color* frontBuffer = renderer.createColorBuffer();
-    RenderEngine::Color* backBuffer = renderer.createColorBuffer();
+    std::unique_ptr<RenderEngine::Color[]> frontBuffer = renderer.createColorBuffer();
+    std::unique_ptr<RenderEngine::Color[]> backBuffer = renderer.createColorBuffer();
 
     // Background render job state. frameReady is set by the render thread once
     // a finished frame has been swapped into frontBuffer.
@@ -382,8 +383,6 @@ void main()
                 if ((size_t)renderW != scene.width_ || (size_t)renderH != scene.height_) {
                     scene.overwriteWidth((size_t)renderW);
                     scene.overwriteHeight((size_t)renderH);
-                    delete[] frontBuffer;
-                    delete[] backBuffer;
                     frontBuffer = renderer.createColorBuffer();
                     backBuffer = renderer.createColorBuffer();
                 }
@@ -417,7 +416,7 @@ void main()
                 // Kick off the render on a background thread.
                 rendering = true;
                 renderThread = std::thread([&]() {
-                    lastRenderTime = renderer.takeSnapshot(backBuffer, renderMode, raySamplesPerPixel);
+                    lastRenderTime = renderer.takeSnapshot(backBuffer.get(), renderMode, raySamplesPerPixel);
                     std::swap(frontBuffer, backBuffer);
                     frameReady.store(true);
                 });
@@ -461,9 +460,6 @@ void main()
     // Wait for any in-flight render before freeing the buffers.
     if (renderThread.joinable())
         renderThread.join();
-
-    delete[] frontBuffer;
-    delete[] backBuffer;
 
     return 0;
 }

@@ -5,6 +5,7 @@
 #include <RenderEngine/utils.hpp>
 #include <RenderEngine/vec3.hpp>
 #include <iostream>
+#include <memory>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -226,7 +227,7 @@ int main() {
   scene.overwriteHeight(RESOLUTION_HEIGHT);
   scene.bucket_size_ = BUCKET_SIZE;
   renderer.overwriteMaxRayDepth(MAX_RAY_DEPTH);
-  RenderEngine::Color *colorBuffer = renderer.createColorBuffer();
+  std::unique_ptr<RenderEngine::Color[]> colorBuffer = renderer.createColorBuffer();
   const char *filename = "renderedDemo.mp4";
 
   // init ffmpeg things
@@ -338,9 +339,9 @@ int main() {
   size_t total_frames = FRAMES_PER_SECOND * 13;
 
   for (int i = 0; i < total_frames; ++i) {
-    renderFrame(scene.camera(), renderer, colorBuffer, i);
+    renderFrame(scene.camera(), renderer, colorBuffer.get(), i);
 
-    src_frame->data[0] = reinterpret_cast<uint8_t *>(colorBuffer);
+    src_frame->data[0] = reinterpret_cast<uint8_t *>(colorBuffer.get());
     src_frame->linesize[0] = RESOLUTION_WIDTH * 3 * sizeof(float);
 
     sws_scale(swsContex, src_frame->data, src_frame->linesize, 0,
