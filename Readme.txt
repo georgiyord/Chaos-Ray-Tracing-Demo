@@ -24,3 +24,9 @@ The scene is rendered without global illumination
 The blender plugin is made by an LLM agent and does not work perfectly. Using it on the blender scene will not produce the same scene.crtscene as in the repository, as manual changes and fixes have been made
 debugTool.cpp was build on top of imgui/examples/example_glfw_opengl3. Due to inexpirience with OpenGL and GLFW and lack of time, an LLM agent was used to reshape most of it
 
+IMPORTANT
+If building manually:
+    main.cpp:       you need to pass libraries to the ray tracer and ffmpeg
+    debugTool.cpp:  you need to pass libraries to the ray tracer, opengl and glfw. Imgui is provided as a submodule to the repository
+
+A dynamic library can be build for the ray tracer with `make libDebug/libRelease/libReleaseWithSymbols` from it's own repository.
